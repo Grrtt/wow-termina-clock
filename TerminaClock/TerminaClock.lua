@@ -157,6 +157,14 @@ SlashCmdList.TERMINACLOCK = function(input)
         addon.Dawn.Stop()
         Message(TerminaClockDB.transitions and "Dawn transitions enabled." or "Dawn transitions disabled.")
     elseif command == "screen" or command == "camera" then
+        if value == "restore" then
+            addon.Dawn.Stop()
+            TerminaClockDB.screenEffect = false
+            local restored = addon.Viewport.RestoreFull()
+            Message(restored and "Full render area restored; screen effect disabled." or
+                "Full render-area restoration is pending; screen effect disabled.")
+            return
+        end
         if value == "test" then
             addon.Preview.DayEnd()
             return

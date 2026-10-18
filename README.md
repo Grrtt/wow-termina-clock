@@ -35,4 +35,5 @@ Drag the clock to move it, and hover over it to see the countdown and target tim
 - `/termina dawn first`, `/termina dawn second`, and `/termina dawn final` preview the black dawn screens.
 - `/termina dusk first`, `/termina dusk second`, and `/termina dusk final` preview the evening titles.
 - `/termina test stop` cancels a preview and restores the view and audio.
+- `/termina screen restore` resets the render area to full screen and disables the render-area effect. Restoration retries automatically if WoW delays applying it.
 - `/termina sound`, `/termina screen`, and `/termina transitions` toggle the effects.
