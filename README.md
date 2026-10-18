@@ -1,6 +1,6 @@
 # Termina Clock
 
-A just-for-fun Majora's Mask–style countdown to the end of the WoW Forever stress test.
+A just-for-fun Majora's Mask–style countdown to the end of the WoW Forever Beta.
 
 ![The clock running in WoW, with a white arch, green day diamond, sun, and orbiting light.](docs/images/clock-in-game.png)
 
