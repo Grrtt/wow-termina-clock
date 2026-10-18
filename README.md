@@ -8,8 +8,8 @@ A just-for-fun Majora's Mask–style countdown to the end of the WoW Forever Bet
 2. Extract the downloaded ZIP. Open the extracted `wow-termina-clock-main` folder.
 3. Copy the **`TerminaClock` folder inside it** into your WoW client's `Interface/AddOns` folder. For the beta client, use `_classic_beta_/Interface/AddOns`.
 4. Check that the addon file is at `Interface/AddOns/TerminaClock/TerminaClock.toc`. Copy the inner addon folder, not the entire `wow-termina-clock-main` folder.
-5. Restart WoW. At character selection, open **AddOns** and enable **Termina Clock**. If WoW marks it as outdated, enable **Load out of date AddOns**.
-6. Log in and type `/termina` to see the commands. Drag the clock to move it.
+5. In WoW, type `/reload`. Open **AddOns** from the game menu and enable **Termina Clock** if needed. If WoW marks it as outdated, enable **Load out of date AddOns**, then `/reload` again.
+6. Type `/termina` to see the commands. Drag the clock to move it.
 
 No Git or build tools are required. If you also use the separate stress-test client, repeat the folder-copy step in that client's `Interface/AddOns` folder.
 
@@ -31,6 +31,32 @@ At dawn, a black screen announces the day and actual rounded hours remaining. Ot
 > **Gameplay continues during the dawn cutscene:** You can still be attacked and interact with the world while the black screen covers your view.
 
 The clock ends at the **estimated stress-test finish: October 21, 2026, at 5:00 p.m. PDT** (October 22 at 00:00 UTC). That's a guess of three hours after the announced 2:00 p.m. PDT start. [Blizzard says the test lasts a few hours](https://us.forums.blizzard.com/en/wow/t/wow-forever-stress-test-october-21/2383617), but hasn't announced an exact end time. Custom deadlines stay unchanged.
+
+## Change the countdown deadline
+
+The stress-test end time is not known. The default is an estimate, so you may want to change it when Blizzard announces a time, if the test runs longer, or if you prefer a different estimate.
+
+The command is `/termina deadline <Unix timestamp in seconds>`. You can get that number inside WoW:
+
+1. Choose the date and time **in your computer's local time zone**. For example, this prints the timestamp for October 21, 2026, at 8:00 p.m. locally. Change the numbers to your chosen time; `hour` uses the 24-hour clock.
+
+   ```text
+   /run print(time({year=2026,month=10,day=21,hour=20,min=0,sec=0}))
+   ```
+
+2. Enter `/termina deadline` followed by the number printed in chat. Replace `<number>` below with that number, without the angle brackets:
+
+   ```text
+   /termina deadline <number>
+   ```
+
+3. Hover over the clock to check the new target in local time. The change takes effect immediately and is saved across reloads; the local day labels and transitions adjust to it.
+
+To restore the current default estimate—October 21 at 5:00 p.m. PDT—use:
+
+```text
+/termina deadline 1792627200
+```
 
 The three day labels, shown here as generated artwork previews:
 
