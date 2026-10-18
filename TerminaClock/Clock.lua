@@ -2,9 +2,9 @@ local _, addon = ...
 local Clock = {}
 addon.Clock = Clock
 
--- Estimated wipe: October 21, 2026, 17:00 PDT (October 22, 00:00 UTC).
+-- Estimated stress-test end: October 21, 2026, 17:00 PDT (October 22, 00:00 UTC).
 -- Assumes a three-hour stress test after the announced 14:00 PDT start.
--- This is a guess, not an announced wipe or shutdown time.
+-- This is a guess, not an announced stress-test end time.
 Clock.previousDefaultDeadline = 1792652400
 Clock.defaultDeadline = 1792627200
 

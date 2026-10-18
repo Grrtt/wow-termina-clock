@@ -1,6 +1,6 @@
 # Termina Clock
 
-A just-for-fun Majora's Mask–style clock for the final days of the WoW Forever beta before the wipe.
+A just-for-fun Majora's Mask–style countdown to the end of the WoW Forever stress test.
 
 ![The clock running in WoW, with a white arch, green day diamond, sun, and orbiting light.](docs/images/clock-in-game.png)
 
@@ -8,7 +8,7 @@ The clock counts down in real time. The diamond shows `1st`, `2nd`, or `Final` d
 
 Five bells warn before dawn and dusk. Before a new day, the world view shrinks inward, then returns as a black dawn screen announces the day and hours remaining. Other game audio is muted during that animation and restored afterward. The UI stays at its normal size. Bells become more frequent during the final six hours.
 
-The default target is **October 21, 2026, at 5:00 p.m. PDT** (October 22 at 00:00 UTC): a guess of three hours after the stress test starts. [Blizzard says the test lasts a few hours, then its characters are wiped and the beta reopens](https://us.forums.blizzard.com/en/wow/t/wow-forever-stress-test-october-21/2383617). This estimates the stress-test wipe, not a confirmed final beta shutdown. The old default updates automatically; custom deadlines stay unchanged.
+The clock ends at the **estimated stress-test finish: October 21, 2026, at 5:00 p.m. PDT** (October 22 at 00:00 UTC). That's a guess of three hours after the announced 2:00 p.m. PDT start. [Blizzard says the test lasts a few hours](https://us.forums.blizzard.com/en/wow/t/wow-forever-stress-test-october-21/2383617), but hasn't announced an exact end time. Custom deadlines stay unchanged.
 
 The three day labels, shown here as generated artwork previews:
 

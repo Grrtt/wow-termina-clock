@@ -1,8 +1,8 @@
 ## Interface: 16001, 11509
 ## Title: Termina Clock
-## Notes: A Majora's Mask-inspired countdown to the final day.
+## Notes: A Majora's Mask-inspired countdown to the end of the WoW Forever stress test.
 ## Author: grrtt
-## Version: 1.5.5
+## Version: 1.5.6
 ## SavedVariables: TerminaClockDB
 
 Clock.lua
