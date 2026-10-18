@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="128" viewBox="0 0 256 128"><defs>
+    <linearGradient id="gem" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#249e65"/><stop offset=".48" stop-color="#007143"/><stop offset="1" stop-color="#002e21"/></linearGradient>
+    <radialGradient id="sun"><stop stop-color="#ffbcb2"/><stop offset=".45" stop-color="#e67479"/><stop offset="1" stop-color="#9c303f"/></radialGradient>
+    </defs><g fill="#fff09a" stroke="#24412b" stroke-width="2.6" paint-order="stroke" font-family="DejaVu Serif" font-weight="bold" font-style="italic">
+    <text x="102" y="105" font-size="49" transform="rotate(-5 120 90)">2</text>
+    <text x="129" y="93" font-size="27" letter-spacing="-3">nd</text></g></svg>

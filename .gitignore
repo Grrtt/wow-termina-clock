@@ -1,0 +1,11 @@
+# Local packages and Python build files
+*.zip
+__pycache__/
+*.py[cod]
+
+# Local configuration and credentials
+.env
+.env.*
+*.local
+.DS_Store
+Thumbs.db

@@ -1,0 +1,13 @@
+## Interface: 16001, 11509
+## Title: Termina Clock
+## Notes: A Majora's Mask-inspired countdown to the final day.
+## Author: grrtt
+## Version: 1.5.4
+## SavedVariables: TerminaClockDB
+
+Clock.lua
+Viewport.lua
+Sounds.lua
+Dawn.lua
+Preview.lua
+TerminaClock.lua
