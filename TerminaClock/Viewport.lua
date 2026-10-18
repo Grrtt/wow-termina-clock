@@ -23,7 +23,15 @@ end
 
 function Viewport.Stop()
     if not savedPoints then return end
-    if InCombat() then pendingRestore = true; return end
+    -- Combat does not lock every frame. Restore immediately when WorldFrame
+    -- is unprotected; defer only when WoW actually protects this frame.
+    if InCombat() and (not WorldFrame.IsProtected or WorldFrame:IsProtected()) then
+        if not pendingRestore then
+            print("Termina Clock: WoW is protecting the render frame during combat; it will restore when combat ends.")
+        end
+        pendingRestore = true
+        return
+    end
     WorldFrame:ClearAllPoints()
     if #savedPoints == 0 then
         -- Native full-screen WorldFrame can have no Lua-visible anchors.
