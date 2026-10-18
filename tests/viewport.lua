@@ -66,6 +66,14 @@ assert(WorldFrame.points[1][4] == 0)
 combat = true
 view.SetStep(3)
 assert(WorldFrame.points[1][4] == 0)
+protected = false
+for step = 1,4 do
+    view.SetStep(step)
+    assert(math.abs(WorldFrame.points[1][4] - 1920 * step * 0.025) < 0.001,
+        'Unprotected WorldFrame must shrink at every step during combat')
+end
+view.Stop()
+assert(WorldFrame.points[1][4] == 0, 'Combat preview cancellation must restore immediately')
 combat, protected = false, false
 TerminaClockDB.screenEffect = false
 view.SetStep(3)
@@ -85,9 +93,9 @@ function SetCVar() end
 addon.Sounds = { Stop = function() end, Play = function() return true end }
 assert(loadfile('TerminaClock/Dawn.lua'))('TerminaClock', addon)
 TerminaClockDB.deadline = deadline
-combat = false
-view.SetStep(4)
 combat = true
+view.SetStep(4)
+assert(math.abs(WorldFrame.points[1][4] - 192) < 0.001)
 assert(addon.Dawn.Play('second', true, 37))
 assert(WorldFrame.points[1][4] == 0, 'Viewport must be full-size before dawn starts fading')
 assert(not drivers[2].shown, 'Borders must disappear when dawn begins')

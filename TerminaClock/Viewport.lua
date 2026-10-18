@@ -21,11 +21,15 @@ local function InCombat()
     return InCombatLockdown and InCombatLockdown()
 end
 
+local function IsCombatRestricted()
+    return InCombat() and (not WorldFrame.IsProtected or WorldFrame:IsProtected())
+end
+
 function Viewport.Stop()
     if not savedPoints then return end
     -- Combat does not lock every frame. Restore immediately when WorldFrame
     -- is unprotected; defer only when WoW actually protects this frame.
-    if InCombat() and (not WorldFrame.IsProtected or WorldFrame:IsProtected()) then
+    if IsCombatRestricted() then
         if not pendingRestore then
             print("Termina Clock: WoW is protecting the render frame during combat; it will restore when combat ends.")
         end
@@ -49,7 +53,7 @@ end
 
 function Viewport.SetStep(step)
     if step <= 0 or TerminaClockDB.screenEffect == false then Viewport.Stop(); return end
-    if InCombat() or not WorldFrame then return end
+    if not WorldFrame or IsCombatRestricted() then return end
     if currentStep == step and not pendingRestore then return end
     if not savedPoints then
         savedPoints = {}
