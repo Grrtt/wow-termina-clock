@@ -11,7 +11,10 @@ Warning bells lead into local dawn and dusk. Before the second and final dawns, 
 > [!IMPORTANT]
 > **Render-area behavior during combat:** The render area does not scale down during combat, but the outer black bars still move inward. Once you leave combat, the render area starts shrinking.
 
-At dawn, a black screen announces the day and actual rounded hours remaining. Other game audio is muted during the dawn screen and restored afterward. **The dawn cutscene does not pause gameplay: you can still be attacked and interact with the world while it covers the screen.** Dusk shows a translucent night title without muting game audio. Bells become more frequent during the final six hours.
+At dawn, a black screen announces the day and actual rounded hours remaining. Other game audio is muted during the dawn screen and restored afterward. Dusk shows a translucent night title without muting game audio. Bells become more frequent during the final six hours.
+
+> [!IMPORTANT]
+> **Gameplay continues during the dawn cutscene:** You can still be attacked and interact with the world while the black screen covers your view.
 
 The clock ends at the **estimated stress-test finish: October 21, 2026, at 5:00 p.m. PDT** (October 22 at 00:00 UTC). That's a guess of three hours after the announced 2:00 p.m. PDT start. [Blizzard says the test lasts a few hours](https://us.forums.blizzard.com/en/wow/t/wow-forever-stress-test-october-21/2383617), but hasn't announced an exact end time. Custom deadlines stay unchanged.
 
