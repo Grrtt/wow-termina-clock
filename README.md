@@ -6,7 +6,9 @@ A just-for-fun Majora's Mask–style countdown to the end of the WoW Forever Bet
 
 The clock follows your computer's local time: dawn is **6:00 a.m.**, and dusk is **6:00 p.m.** The diamond shows `1st`, `2nd`, and `Final` on the last three local days leading into the deadline. The sun or moon marks the local hour; the small orbiting light shows progress through that hour. Everyone's countdown ends at the same moment, so the final day can be shorter than 24 hours.
 
-Warning bells lead into local dawn and dusk. Before a new day, the world view shrinks inward, then returns as a black dawn screen announces the day and actual rounded hours remaining. A translucent night title appears at dusk. Other game audio is muted during that animation and restored afterward. The render-area effect follows the same sequence in and out of combat, restoring as the dawn animation starts. The UI stays at its normal size. Bells become more frequent during the final six hours.
+Warning bells lead into local dawn and dusk. Before the second and final dawns, the game’s render area becomes smaller in four steps, with black borders around it. This resizes the area WoW draws into; it does not uniformly scale down the finished scene or make your character smaller. The camera and UI stay unchanged. The render-area effect follows the same sequence in and out of combat and restores the previous area as the dawn animation starts.
+
+At dawn, a black screen announces the day and actual rounded hours remaining. Other game audio is muted during the dawn screen and restored afterward. Dusk shows a translucent night title without muting game audio. Bells become more frequent during the final six hours.
 
 The clock ends at the **estimated stress-test finish: October 21, 2026, at 5:00 p.m. PDT** (October 22 at 00:00 UTC). That's a guess of three hours after the announced 2:00 p.m. PDT start. [Blizzard says the test lasts a few hours](https://us.forums.blizzard.com/en/wow/t/wow-forever-stress-test-october-21/2383617), but hasn't announced an exact end time. Custom deadlines stay unchanged.
 
@@ -18,7 +20,7 @@ The three day labels, shown here as generated artwork previews:
 
 The black dawn transition announces the day and hours remaining for your time zone. This is a generated preview of its title screen:
 
-![Dawn of The First Day, with 72 Hours Remain on a black background.](docs/images/dawn-preview.png)
+![Generated dawn title showing Dawn of The First Day and a placeholder for the locally calculated hours remaining.](docs/images/dawn-preview.png)
 
 Drag the clock to move it, and hover over it to see the countdown and target time. Use `/termina` for commands.
 
