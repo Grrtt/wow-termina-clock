@@ -11,6 +11,9 @@ Warning bells lead into local dawn and dusk. Before the second and final dawns, 
 > [!IMPORTANT]
 > **Render-area behavior during combat:** The render area does not scale down during combat, but the outer black bars still move inward. Once you leave combat, the render area starts shrinking.
 
+> [!TIP]
+> **If the render area stays reduced:** After installing the latest update, run `/reload`, then `/termina screen restore`. This resets the render area to full screen and disables the effect. The addon verifies restoration and retries if WoW delays applying it. Use `/termina screen` to enable the effect again before testing.
+
 At dawn, a black screen announces the day and actual rounded hours remaining. Other game audio is muted during the dawn screen and restored afterward. Dusk shows a translucent night title without muting game audio. Bells become more frequent during the final six hours.
 
 > [!IMPORTANT]
