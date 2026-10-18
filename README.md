@@ -2,6 +2,17 @@
 
 A just-for-fun Majora's Mask–style countdown to the end of the WoW Forever Beta.
 
+## Install from GitHub
+
+1. On [the repository page](https://github.com/Grrtt/wow-termina-clock), select **Code**, then **Download ZIP**.
+2. Extract the downloaded ZIP. Open the extracted `wow-termina-clock-main` folder.
+3. Copy the **`TerminaClock` folder inside it** into your WoW client's `Interface/AddOns` folder. For the beta client, use `_classic_beta_/Interface/AddOns`.
+4. Check that the addon file is at `Interface/AddOns/TerminaClock/TerminaClock.toc`. Copy the inner addon folder, not the entire `wow-termina-clock-main` folder.
+5. Restart WoW. At character selection, open **AddOns** and enable **Termina Clock**. If WoW marks it as outdated, enable **Load out of date AddOns**.
+6. Log in and type `/termina` to see the commands. Drag the clock to move it.
+
+No Git or build tools are required. If you also use the separate stress-test client, repeat the folder-copy step in that client's `Interface/AddOns` folder.
+
 ![The clock running in WoW, with a white arch, green day diamond, sun, and orbiting light.](docs/images/clock-in-game.png)
 
 The clock follows your computer's local time: dawn is **6:00 a.m.**, and dusk is **6:00 p.m.** The diamond shows `1st`, `2nd`, and `Final` on the last three local days leading into the deadline. The sun or moon marks the local hour; the small orbiting light shows progress through that hour. Everyone's countdown ends at the same moment, so the final day can be shorter than 24 hours.
