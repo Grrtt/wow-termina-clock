@@ -18,5 +18,5 @@ for day in ['first', 'second', 'final']:
     ], check=True)
 subprocess.run([
     'magick', '-size', '1024x512', 'xc:black', str(textures / 'dawn-first.tga'),
-    '-composite', str(output / 'dawn-preview.png'),
+    '-composite', '-font', 'DejaVu-Serif', '-fill', '#fffef0', '-pointsize', '33', '-gravity', 'North', '-annotate', '+0+308', 'Hours remaining', str(output / 'dawn-preview.png'),
 ], check=True)

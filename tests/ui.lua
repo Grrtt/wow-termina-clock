@@ -66,7 +66,7 @@ print('UI initialization and command smoke tests passed.')
 
 local dayTexture
 for _, texture in ipairs(textures) do
-    if type(rawget(texture, 'texturePath')) == 'string' and texture.texturePath:find('Textures\\second.tga',1,true) then
+    if type(rawget(texture, 'texturePath')) == 'string' and (texture.texturePath:find('Textures\\first.tga',1,true) or texture.texturePath:find('Textures\\second.tga',1,true) or texture.texturePath:find('Textures\\final.tga',1,true)) then
         dayTexture = texture
     end
 end

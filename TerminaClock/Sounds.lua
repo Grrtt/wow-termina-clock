@@ -28,46 +28,53 @@ function Sounds.Play(name, preview)
     return success
 end
 
-local function Crossed(before, remaining, threshold)
-    return before > threshold and remaining <= threshold
+local function Crossed(before, now, threshold)
+    return before < threshold and now >= threshold
 end
 
--- Real hours replace Termina hours. Do not replay missed cues after a pause.
-function Sounds.Cue(before, remaining)
-    if not before or remaining >= before or before - remaining > 5 then return nil end
-    for _, dawn in ipairs({259200, 172800, 86400}) do
-        if Crossed(before, remaining, dawn) then return "dawn" end
+function Sounds.Cue(before, now, deadline)
+    if not before or now <= before or now - before > 5 then return nil end
+    if Crossed(before, now, deadline) then return "bell" end
+    if now >= deadline then return nil end
+    local days = addon.Clock.Schedule(deadline)
+    for _, day in ipairs(days) do
+        if Crossed(before, now, day.dawn) then return "dawn", day.name end
+        if day.dusk < deadline and Crossed(before, now, day.dusk) then return "dusk", day.name end
     end
-    if Crossed(before, remaining, 0) then return "bell" end
-    if remaining <= 0 or remaining > 259200 then return nil end
+    if now < days[1].dawn then return nil end
+    local remaining = deadline - now
     if remaining <= 21600 then
         local interval = 600
         if remaining <= 1800 then interval = 180
         elseif remaining <= 3600 then interval = 300 end
-        if Crossed(before, remaining, 21600) or
-            math.ceil(before / interval) ~= math.ceil(remaining / interval) then
+        if Crossed(before, now, deadline - 21600) or
+            math.ceil((deadline - before) / interval) ~= math.ceil(remaining / interval) then
             return "bell"
         end
     else
-        -- Five tolls at :30, :36, :42, :48, and :54 before each dawn/dusk.
-        for _, boundary in ipairs({216000, 172800, 129600, 86400, 43200}) do
-            for minutes = 6, 30, 6 do
-                if Crossed(before, remaining, boundary + minutes * 60) then return "bell" end
+        for _, day in ipairs(days) do
+            for _, boundary in ipairs({day.dawn, day.dusk}) do
+                if boundary < deadline then
+                    for minutes = 6, 30, 6 do
+                        if Crossed(before, now, boundary - minutes * 60) then return "bell" end
+                    end
+                end
             end
         end
     end
-    if math.ceil(before / 3600) ~= math.ceil(remaining / 3600) then return "tick" end
+    -- Detect local hour changes, including time zones with fractional offsets.
+    local hour = (date or os.date)("%Y%m%d%H", now)
+    if hour ~= (date or os.date)("%Y%m%d%H", before) then return "tick" end
 end
 
 function Sounds.Update(now, deadline)
-    local remaining = math.max(0, deadline - now)
     if previousDeadline ~= deadline then previous = nil end
-    local cue = Sounds.Cue(previous, remaining)
-    previous, previousDeadline = remaining, deadline
+    local cue, day = Sounds.Cue(previous, now, deadline)
+    previous, previousDeadline = now, deadline
     if addon.Preview and addon.Preview.IsPlaying() then return end
-    if addon.Viewport then addon.Viewport.Update(remaining) end
-    if cue == "dawn" and addon.Dawn then
-        addon.Dawn.Play(addon.Dawn.Day(remaining), false)
+    if addon.Viewport then addon.Viewport.Update(now, deadline) end
+    if (cue == "dawn" or cue == "dusk") and addon.Dawn then
+        addon.Dawn.Play(day, false, math.ceil((deadline - now) / 3600), cue == "dusk")
     elseif cue then
         Sounds.Play(cue)
     end

@@ -103,6 +103,7 @@ frame:SetScript("OnEnter", function(self)
     GameTooltip:AddLine(state.text .. " remaining", 1, 1, 1)
     GameTooltip:AddLine("Target: " .. date("%Y-%m-%d %H:%M:%S", TerminaClockDB.deadline) .. " (local time)", 1, 1, 1)
     GameTooltip:AddLine("Estimated stress-test end: three hours after it starts.", 1, 0.8, 0.4, true)
+    GameTooltip:AddLine("The clock follows your computer's local time.", 1, 1, 1)
     GameTooltip:AddLine("Drag to move. /termina for commands.", 1, 1, 1)
     GameTooltip:Show()
 end)
@@ -138,10 +139,16 @@ SlashCmdList.TERMINACLOCK = function(input)
         end
         TerminaClockDB.deadline = math.floor(deadline)
         sounds.Reset()
-    elseif command == "dawn" then
+    elseif command == "dawn" or command == "dusk" then
         if value == "stop" then addon.Dawn.Stop(); return end
         local day = value ~= "" and value or "first"
-        if not addon.Dawn.Play(day, true) then
+        local hours
+        if command == "dusk" then
+            for _, entry in ipairs(Clock.Schedule(TerminaClockDB.deadline)) do
+                if entry.name == day then hours = math.ceil((TerminaClockDB.deadline - entry.dusk) / 3600) end
+            end
+        end
+        if not addon.Dawn.Play(day, true, hours, command == "dusk") then
             Message("Use /termina dawn first | second | final | stop.")
         end
         return
@@ -187,7 +194,7 @@ SlashCmdList.TERMINACLOCK = function(input)
         TerminaClockDB = { x = 0, y = -220, scale = 1, deadline = Clock.defaultDeadline }
         sounds.Reset()
     else
-        Message("/termina show | hide | lock | scale <0.5–3> | deadline <Unix seconds> | dawn <first|second|final|stop> | transitions | screen [test] | sound | test <bell|dawn|tick|dayend|stop> | reset")
+        Message("/termina show | hide | lock | scale <0.5–3> | deadline <Unix seconds> | dawn/dusk <first|second|final|stop> | transitions | screen [test] | sound | test <bell|dawn|tick|dayend|stop> | reset")
         return
     end
     ApplySettings()

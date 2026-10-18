@@ -26,17 +26,22 @@ local combat = false
 function InCombatLockdown() return combat end
 TerminaClockDB = {}
 local addon = {}
+assert(loadfile('TerminaClock/Clock.lua'))('TerminaClock', addon)
 assert(loadfile('TerminaClock/Viewport.lua'))('TerminaClock', addon)
 local view = addon.Viewport
-for _, dawn in ipairs({172800,86400}) do
-    assert(view.Step(dawn + 1800) == 0)
-    assert(view.Step(dawn + 1440) == 1)
-    assert(view.Step(dawn + 1080) == 2)
-    assert(view.Step(dawn + 720) == 3)
-    assert(view.Step(dawn + 360) == 4)
-    assert(view.Step(dawn) == 0)
+local deadline = addon.Clock.defaultDeadline
+local days = addon.Clock.Schedule(deadline)
+for index = 2,3 do
+    local dawn = days[index].dawn
+    assert(view.Step(dawn - 1800, deadline) == 0)
+    assert(view.Step(dawn - 1440, deadline) == 1)
+    assert(view.Step(dawn - 1080, deadline) == 2)
+    assert(view.Step(dawn - 720, deadline) == 3)
+    assert(view.Step(dawn - 360, deadline) == 4)
+    assert(view.Step(dawn, deadline) == 0)
 end
-assert(view.Step(43200 + 360) == 0 and view.Step(360) == 0)
+assert(view.Step(days[3].dusk - 360, deadline) == 0)
+assert(view.Step(deadline, deadline) == 0)
 view.SetStep(4)
 assert(math.abs(WorldFrame.points[1][4] - 192) < 0.001)
 assert(math.abs(WorldFrame.points[1][5] + 108) < 0.001)

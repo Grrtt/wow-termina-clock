@@ -1,8 +1,11 @@
 local frames = {}
+local textValue
 local function object()
     local obj = { scripts = {}, shown = false }
     return setmetatable(obj, {__index = function(self, key)
+        if key == 'SetText' then return function(_, text) textValue = text end end
         if key == 'SetScript' then return function(_, name, fn) self.scripts[name] = fn end end
+        if key == 'CreateFontString' then return function() return object() end end
         if key == 'CreateTexture' then return function() return object() end end
         if key == 'Hide' then return function()
             self.shown = false
@@ -26,13 +29,15 @@ function SetCVar(name, value) values[name] = tostring(value) end
 local plays, stops = 0, 0
 local restored = false
 local addon = { Viewport = { Stop = function() restored = true end }, Sounds = {
-    Play = function(name, preview) assert(name == 'dawn'); plays = plays + 1 end,
+    Play = function(name, preview) assert(name == 'dawn' or name == 'tick'); plays = plays + 1 end,
     Stop = function() stops = stops + 1 end,
 }}
+assert(loadfile('TerminaClock/Clock.lua'))('TerminaClock', addon)
 assert(loadfile('TerminaClock/Dawn.lua'))('TerminaClock', addon)
 local dawn, overlay = addon.Dawn, frames[1]
 assert(dawn.Play('first', true))
 assert(restored and overlay.shown and plays == 0)
+assert(textValue:find(tostring(addon.Clock.DawnHours('first',addon.Clock.defaultDeadline)),1,true))
 for _, value in pairs(values) do assert(value == '0') end
 assert(TerminaClockDB.dawnAudioRecovery.Sound_MusicVolume == '0.3')
 assert(plays == 0)
@@ -61,5 +66,11 @@ TerminaClockDB.dawnAudioRecovery = { Sound_SFXVolume = '0.9' }
 values.Sound_SFXVolume = '0'
 dawn.RecoverAudio()
 assert(values.Sound_SFXVolume == '0.9')
-assert(dawn.Day(259200) == 'first' and dawn.Day(172800) == 'second' and dawn.Day(86400) == 'final')
+TerminaClockDB.transitions = true
+dawn.Play('second',true,37,true)
+assert(textValue == '–37 Hours Remain–')
+assert(values.Sound_SFXVolume == '0.9')
+overlay.scripts.OnUpdate(overlay,0.4)
+dawn.Stop()
+assert(values.Sound_SFXVolume == '0.9')
 print('Dawn timing, audio restoration, cancellation, preview, and recovery tests passed.')

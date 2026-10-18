@@ -12,9 +12,13 @@ black:SetColorTexture(0, 0, 0, 1)
 local title = overlay:CreateTexture(nil, "OVERLAY")
 title:SetSize(760, 380)
 title:SetPoint("CENTER")
+local remainingText = overlay:CreateFontString(nil, "OVERLAY")
+remainingText:SetFont(STANDARD_TEXT_FONT or "Fonts\\FRIZQT__.TTF", 24, "OUTLINE")
+remainingText:SetTextColor(1, 1, 0.9)
+remainingText:SetPoint("CENTER", 0, -64)
 local channels = { "Sound_SFXVolume", "Sound_MusicVolume", "Sound_AmbienceVolume", "Sound_DialogVolume" }
 local active
-local days = { first = { hours = 72 }, second = { hours = 48 }, final = { hours = 24 } }
+local days = { first = true, second = true, final = true }
 
 function Dawn.RecoverAudio()
     local saved = TerminaClockDB.dawnAudioRecovery
@@ -57,25 +61,31 @@ local function Update(_, delta)
     if elapsed >= 5.2 then Dawn.Stop(); return end
     local opacity = math.min(1, elapsed / 0.35, (5.2 - elapsed) / 0.8)
     overlay:SetAlpha(math.max(0, opacity))
-    title:SetAlpha(math.max(0, math.min(1, (elapsed - 0.35) / 0.5)))
+    local textAlpha = math.max(0, math.min(1, (elapsed - 0.35) / 0.5))
+    title:SetAlpha(textAlpha)
+    remainingText:SetAlpha(textAlpha)
     if elapsed >= 0.35 and not active.sounded then
         active.sounded = true
-        addon.Sounds.Play("dawn", active.preview)
+        addon.Sounds.Play(active.night and "tick" or "dawn", active.preview)
     end
 end
 
-function Dawn.Play(day, preview)
+function Dawn.Play(day, preview, hours, night)
     if not days[day] then return false end
     if not preview and TerminaClockDB.transitions == false then
-        addon.Sounds.Play("dawn")
+        addon.Sounds.Play(night and "tick" or "dawn")
         return true
     end
     Dawn.Stop()
     -- Restore at the same boundary that starts the dawn overlay, before its
     -- first fade frame, rather than relying on end-of-animation cleanup.
-    QuietAudio()
-    active = { elapsed = 0, preview = preview }
-    title:SetTexture("Interface\\AddOns\\TerminaClock\\Textures\\dawn-" .. day .. ".tga", "CLAMP", "CLAMP", "NEAREST")
+    if not night then QuietAudio() end
+    hours = hours or addon.Clock.DawnHours(day, TerminaClockDB.deadline or addon.Clock.defaultDeadline)
+    active = { elapsed = 0, preview = preview, night = night }
+    black:SetColorTexture(night and 0.12 or 0, 0, night and 0.2 or 0, night and 0.45 or 1)
+    remainingText:SetText(string.format("–%d Hours Remain–", math.max(0, hours)))
+    remainingText:SetAlpha(0)
+    title:SetTexture("Interface\\AddOns\\TerminaClock\\Textures\\" .. (night and "night-" or "dawn-") .. day .. ".tga", "CLAMP", "CLAMP", "NEAREST")
     -- Keep the title inside smaller windows while preserving its aspect ratio.
     local width = math.min(760, UIParent:GetWidth() * 0.85)
     title:SetSize(width, width / 2)
@@ -86,11 +96,6 @@ function Dawn.Play(day, preview)
     return true
 end
 
-function Dawn.Day(remaining)
-    if remaining <= 86400 then return "final" end
-    if remaining <= 172800 then return "second" end
-    return "first"
-end
 
 overlay:RegisterEvent("PLAYER_LOGOUT")
 overlay:RegisterEvent("PLAYER_LEAVING_WORLD")

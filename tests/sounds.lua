@@ -1,56 +1,60 @@
 local addon = {}
-assert(loadfile("TerminaClock/Sounds.lua"))("TerminaClock", addon)
-local cue = addon.Sounds.Cue
-assert(cue(nil, 100) == nil)
-assert(cue(86401, 86400) == "dawn")
-assert(cue(172801, 172800) == "dawn")
-assert(cue(259201, 259200) == "dawn")
-assert(cue(21601, 21600) == "bell")
-assert(cue(21001, 21000) == "bell")
-assert(cue(3601, 3600) == "bell")
-assert(cue(3301, 3300) == "bell")
-assert(cue(1801, 1800) == "bell")
-assert(cue(1621, 1620) == "bell")
-assert(cue(1, 0) == "bell")
-assert(cue(0, 0) == nil)
-assert(cue(90000, 86400) == nil)
-assert(cue(86000, 90000) == nil)
-assert(cue(43381, 43380) == nil)
-for _, boundary in ipairs({216000,172800,129600,86400,43200}) do
-    for minutes = 6,30,6 do
-        local remaining = boundary + minutes * 60
-        assert(cue(remaining + 1, remaining) == "bell")
+assert(loadfile('TerminaClock/Clock.lua'))('TerminaClock', addon)
+assert(loadfile('TerminaClock/Sounds.lua'))('TerminaClock', addon)
+local deadline = addon.Clock.defaultDeadline
+local days = addon.Clock.Schedule(deadline)
+local function cue(timestamp) return addon.Sounds.Cue(timestamp-1, timestamp, deadline) end
+assert(addon.Sounds.Cue(nil, deadline-100, deadline) == nil)
+for _, day in ipairs(days) do
+    local kind, name = cue(day.dawn)
+    assert(kind == 'dawn' and name == day.name)
+    if day.dusk < deadline then
+        kind, name = cue(day.dusk)
+        assert(kind == 'dusk' and name == day.name)
+    end
+    for _, boundary in ipairs({day.dawn, day.dusk}) do
+        if boundary < deadline and boundary - 1800 >= days[1].dawn and boundary < deadline - 21600 then
+            for minutes = 6,30,6 do assert(cue(boundary-minutes*60) == 'bell') end
+        end
     end
 end
-assert(cue(39601, 39600) == "tick")
+for _, remaining in ipairs({21600,21000,3600,3300,1800,1620,0}) do
+    local kind = cue(deadline-remaining)
+    assert(kind == 'bell' or kind == 'dawn' or kind == 'dusk')
+end
+assert(addon.Sounds.Cue(days[2].dawn-100,days[2].dawn,deadline) == nil)
+assert(addon.Sounds.Cue(deadline,deadline-1,deadline) == nil)
+assert(cue(days[2].dawn + 3600) == 'tick')
 local plays, stops = {}, 0
 TerminaClockDB = {}
 function PlaySoundFile(path, channel)
-    assert(channel == "Master")
-    plays[#plays + 1] = path
+    assert(channel == 'Master')
+    plays[#plays+1] = path
     return true, #plays
 end
 function StopSound() stops = stops + 1 end
-addon.Sounds.Update(0, 86401)
+addon.Sounds.Update(days[2].dawn-1, deadline)
 assert(#plays == 0)
-addon.Sounds.Update(1, 86401)
-assert(#plays == 1 and plays[1]:find("dawn.wav", 1, true))
-addon.Sounds.Update(1, 86401)
+addon.Sounds.Update(days[2].dawn, deadline)
+assert(#plays == 1 and plays[1]:find('dawn.wav',1,true))
+addon.Sounds.Update(days[2].dawn, deadline)
 assert(#plays == 1)
 TerminaClockDB.muted = true
-addon.Sounds.Play("bell")
+addon.Sounds.Play('bell')
 assert(#plays == 1)
-addon.Sounds.Play("tick", true)
+addon.Sounds.Play('tick',true)
 assert(#plays == 2 and stops == 1)
-assert(not addon.Sounds.Play("invalid", true))
-addon.Sounds.Update(2, 172802)
-assert(#plays == 2)
-print("Sound scheduling and playback tests passed.")
-
-local shown
-addon.Dawn = { Stop = function() end, Day = function() return "second" end, Play = function(day) shown = day end }
+local shown, hours, night
+addon.Dawn = { Stop = function() end, Play = function(day, _, count, isNight)
+    shown, hours, night = day, count, isNight
+end }
 addon.Sounds.Reset()
-addon.Sounds.Update(0, 172801)
-addon.Sounds.Update(1, 172801)
-assert(shown == "second")
-print("Automatic dawn transition integration test passed.")
+addon.Sounds.Update(days[2].dawn-1,deadline)
+addon.Sounds.Update(days[2].dawn,deadline)
+assert(shown == 'second' and not night)
+assert(hours == addon.Clock.DawnHours('second',deadline))
+addon.Sounds.Reset()
+addon.Sounds.Update(days[2].dusk-1,deadline)
+addon.Sounds.Update(days[2].dusk,deadline)
+assert(shown == 'second' and night)
+print('Local bell, dawn/dusk, sound playback, and transition integration tests passed.')

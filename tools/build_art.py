@@ -50,6 +50,10 @@ for day, word, hours in [('first','First',72),('second','Second',48),('final','F
     build('dawn-' + day, f'''<g fill="#fffef0" text-anchor="middle" font-family="DejaVu Serif">
     <text x="512" y="165" font-size="61">Dawn of</text>
     <text x="512" y="263" font-size="80">The {word} Day</text>
-    <text x="512" y="338" font-size="33">–{hours} Hours Remain–</text></g>''', 1024, 512)
+</g>''', 1024, 512)
+for day, word in [('first','First'),('second','Second'),('final','Final')]:
+    build('night-' + day, f'''<g fill="#ffe58a" text-anchor="middle" font-family="DejaVu Serif">
+    <text x="512" y="165" font-size="61">Night of</text>
+    <text x="512" y="263" font-size="80">The {word} Day</text></g>''', 1024, 512)
 # A preview composites the exact textures and coordinates used by the addon.
 subprocess.run(['magick','-size','512x256','xc:#393b3b',str(textures/'dial.tga'),'-filter','point','-geometry','512x256+0+0','-composite',str(textures/'first.tga'),'-filter','point','-geometry','512x256+0+0','-composite',str(textures/'sun.tga'),'-geometry','48x48+46+94','-composite',str(textures/'star.tga'),'-geometry','28x28+275+196','-composite',str(root/'preview.png')],check=True)

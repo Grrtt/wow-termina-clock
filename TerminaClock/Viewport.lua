@@ -65,19 +65,18 @@ function Viewport.SetStep(step)
     WorldFrame:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -x, y)
 end
 
-function Viewport.Step(remaining)
-    -- Shrink only before dawn of days two and three, never at dusk or the endpoint.
-    for _, dawn in ipairs({ 172800, 86400 }) do
-        local untilDawn = remaining - dawn
-        if untilDawn > 0 and untilDawn <= 1800 then
+function Viewport.Step(now, deadline)
+    for index, day in ipairs(addon.Clock.Schedule(deadline)) do
+        local untilDawn = day.dawn - now
+        if index > 1 and now < deadline and untilDawn > 0 and untilDawn <= 1800 then
             return math.min(4, math.floor((1800 - untilDawn) / 360))
         end
     end
     return 0
 end
 
-function Viewport.Update(remaining)
-    Viewport.SetStep(Viewport.Step(remaining))
+function Viewport.Update(now, deadline)
+    Viewport.SetStep(Viewport.Step(now, deadline))
 end
 
 driver:RegisterEvent("PLAYER_REGEN_ENABLED")
