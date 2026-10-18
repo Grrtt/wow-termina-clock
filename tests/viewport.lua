@@ -1,9 +1,8 @@
 unpack = table.unpack or unpack
 local drivers = {}
-local protected = false
 local function object()
     return setmetatable({ scripts = {}, points = {}, shown = false }, { __index = function(self, key)
-        if key == 'IsProtected' then return function() return protected end end
+        if key == 'IsProtected' then return function() error('Viewport must not inspect combat protection') end end
         if key == 'CreateFontString' then return function() return object() end end
         if key == 'SetScript' then return function(_, name, fn) self.scripts[name] = fn end end
         if key == 'CreateAnimationGroup' or key == 'SetScale' then
@@ -25,8 +24,7 @@ function CreateFrame() local f=object(); drivers[#drivers+1]=f; return f end
 UIParent, WorldFrame = object(), object()
 WorldFrame:SetPoint('TOPLEFT', UIParent, 'TOPLEFT', 0, 0)
 WorldFrame:SetPoint('BOTTOMRIGHT', UIParent, 'BOTTOMRIGHT', 0, 0)
-local combat = false
-function InCombatLockdown() return combat end
+function InCombatLockdown() error('Viewport must not inspect combat state') end
 TerminaClockDB = {}
 local addon = {}
 assert(loadfile('TerminaClock/Clock.lua'))('TerminaClock', addon)
@@ -51,30 +49,13 @@ assert(math.abs(WorldFrame.points[1][5] + 108) < 0.001)
 assert(drivers[2].shown)
 view.Stop()
 assert(WorldFrame.points[1][4] == 0 and not drivers[2].shown)
-view.SetStep(2)
-combat = true
-view.Stop()
-assert(WorldFrame.points[1][4] == 0, 'Unprotected WorldFrame must restore during combat')
-combat = false
-view.SetStep(2)
-protected, combat = true, true
-view.Stop()
-assert(math.abs(WorldFrame.points[1][4] - 96) < 0.001)
-combat = false
-drivers[1].scripts.OnEvent(drivers[1], 'PLAYER_REGEN_ENABLED')
-assert(WorldFrame.points[1][4] == 0)
-combat = true
-view.SetStep(3)
-assert(WorldFrame.points[1][4] == 0)
-protected = false
 for step = 1,4 do
     view.SetStep(step)
     assert(math.abs(WorldFrame.points[1][4] - 1920 * step * 0.025) < 0.001,
-        'Unprotected WorldFrame must shrink at every step during combat')
+        'WorldFrame must shrink at every step without querying combat')
 end
 view.Stop()
-assert(WorldFrame.points[1][4] == 0, 'Combat preview cancellation must restore immediately')
-combat, protected = false, false
+assert(WorldFrame.points[1][4] == 0, 'Preview cancellation must restore immediately')
 TerminaClockDB.screenEffect = false
 view.SetStep(3)
 assert(WorldFrame.points[1][4] == 0)
@@ -85,15 +66,14 @@ view.Stop()
 assert(#WorldFrame.points == 2)
 assert(WorldFrame.points[1][1] == 'TOPLEFT' and WorldFrame.points[1][4] == 0)
 assert(WorldFrame.points[2][1] == 'BOTTOMRIGHT' and WorldFrame.points[2][5] == 0)
-print('World-only shrink, unchanged UI, restoration, combat deferral, and schedule tests passed.')
+print('World-only shrink, unchanged UI, immediate restoration, and schedule tests passed.')
 
--- Reproduce a preview that enters combat before the second-day dawn screen.
+-- Verify that dawn restores the viewport without inspecting combat state.
 function GetCVar() return '0.5' end
 function SetCVar() end
 addon.Sounds = { Stop = function() end, Play = function() return true end }
 assert(loadfile('TerminaClock/Dawn.lua'))('TerminaClock', addon)
 TerminaClockDB.deadline = deadline
-combat = true
 view.SetStep(4)
 assert(math.abs(WorldFrame.points[1][4] - 192) < 0.001)
 assert(addon.Dawn.Play('second', true, 37))
@@ -104,4 +84,4 @@ drivers[3].scripts.OnUpdate(drivers[3], 0.4)
 assert(WorldFrame.points[1][4] == 0)
 drivers[3].scripts.OnUpdate(drivers[3], 5)
 assert(WorldFrame.points[1][4] == 0)
-print('Second-day dawn restores the unprotected viewport at animation start during combat.')
+print('Second-day dawn restores the viewport at animation start without combat checks.')

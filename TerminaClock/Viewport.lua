@@ -2,7 +2,7 @@ local _, addon = ...
 local Viewport = {}
 addon.Viewport = Viewport
 local driver = CreateFrame("Frame")
-local savedPoints, pendingRestore, currentStep
+local savedPoints, currentStep
 local matte = CreateFrame("Frame", nil, UIParent)
 matte:SetParent(nil)
 matte:SetAllPoints(UIParent)
@@ -17,25 +17,8 @@ for _, edge in ipairs({ "TOP", "BOTTOM", "LEFT", "RIGHT" }) do
 end
 matte:Hide()
 
-local function InCombat()
-    return InCombatLockdown and InCombatLockdown()
-end
-
-local function IsCombatRestricted()
-    return InCombat() and (not WorldFrame.IsProtected or WorldFrame:IsProtected())
-end
-
 function Viewport.Stop()
     if not savedPoints then return end
-    -- Combat does not lock every frame. Restore immediately when WorldFrame
-    -- is unprotected; defer only when WoW actually protects this frame.
-    if IsCombatRestricted() then
-        if not pendingRestore then
-            print("Termina Clock: WoW is protecting the render frame during combat; it will restore when combat ends.")
-        end
-        pendingRestore = true
-        return
-    end
     WorldFrame:ClearAllPoints()
     if #savedPoints == 0 then
         -- Native full-screen WorldFrame can have no Lua-visible anchors.
@@ -47,21 +30,20 @@ function Viewport.Stop()
             WorldFrame:SetPoint(unpack(point, 1, 5))
         end
     end
-    savedPoints, pendingRestore, currentStep = nil, nil, nil
+    savedPoints, currentStep = nil, nil
     matte:Hide()
 end
 
 function Viewport.SetStep(step)
     if step <= 0 or TerminaClockDB.screenEffect == false then Viewport.Stop(); return end
-    if not WorldFrame or IsCombatRestricted() then return end
-    if currentStep == step and not pendingRestore then return end
+    if not WorldFrame then return end
+    if currentStep == step then return end
     if not savedPoints then
         savedPoints = {}
         for i = 1, WorldFrame:GetNumPoints() do
             savedPoints[i] = { WorldFrame:GetPoint(i) }
         end
     end
-    pendingRestore = nil
     currentStep = step
     local scale = 1 - math.min(step, 4) * 0.05
     local inset = (1 - scale) / 2
@@ -91,9 +73,6 @@ function Viewport.Update(now, deadline)
     Viewport.SetStep(Viewport.Step(now, deadline))
 end
 
-driver:RegisterEvent("PLAYER_REGEN_ENABLED")
 driver:RegisterEvent("PLAYER_LOGOUT")
 driver:RegisterEvent("PLAYER_LEAVING_WORLD")
-driver:SetScript("OnEvent", function(_, event)
-    if event ~= "PLAYER_REGEN_ENABLED" or pendingRestore then Viewport.Stop() end
-end)
+driver:SetScript("OnEvent", function() Viewport.Stop() end)
