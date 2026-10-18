@@ -23,7 +23,7 @@ A just-for-fun Majora's Mask–style countdown to the end of the WoW Forever Bet
 5. In WoW, type `/reload`. Open **AddOns** from the game menu and enable **Termina Clock** if needed. If WoW marks it as outdated, enable **Load out of date AddOns**, then `/reload` again.
 6. Type `/termina` to see the commands. Drag the clock to move it.
 
-No Git or build tools are required. If you also use the separate stress-test client, repeat the folder-copy step in that client's `Interface\AddOns` folder.
+No Git or build tools are required.
 
 ![The clock running in WoW, with a white arch, green day diamond, sun, and orbiting light.](docs/images/clock-in-game.png)
 
