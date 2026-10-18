@@ -2,16 +2,28 @@
 
 A just-for-fun Majora's Mask–style countdown to the end of the WoW Forever Beta.
 
-## Install from GitHub
+## Install from GitHub on Windows
 
 1. On [the repository page](https://github.com/Grrtt/wow-termina-clock), select **Code**, then **Download ZIP**.
-2. Extract the downloaded ZIP. Open the extracted `wow-termina-clock-main` folder.
-3. Copy the **`TerminaClock` folder inside it** into your WoW client's `Interface/AddOns` folder. For the beta client, use `_classic_beta_/Interface/AddOns`.
-4. Check that the addon file is at `Interface/AddOns/TerminaClock/TerminaClock.toc`. Copy the inner addon folder, not the entire `wow-termina-clock-main` folder.
+2. In File Explorer, right-click the downloaded ZIP and select **Extract All**. Open the extracted `wow-termina-clock-main` folder.
+3. Copy the **`TerminaClock` folder inside it** into the beta client's `Interface\AddOns` folder. For example:
+
+   ```text
+   C:\Program Files (x86)\World of Warcraft\_classic_beta_\Interface\AddOns
+   ```
+
+   If WoW is installed on another drive or in another folder, use that installation's `_classic_beta_\Interface\AddOns` folder instead.
+
+4. Check that the addon file ends up at the following path inside your WoW installation. Copy the inner addon folder, not the entire `wow-termina-clock-main` folder.
+
+   ```text
+   _classic_beta_\Interface\AddOns\TerminaClock\TerminaClock.toc
+   ```
+
 5. In WoW, type `/reload`. Open **AddOns** from the game menu and enable **Termina Clock** if needed. If WoW marks it as outdated, enable **Load out of date AddOns**, then `/reload` again.
 6. Type `/termina` to see the commands. Drag the clock to move it.
 
-No Git or build tools are required. If you also use the separate stress-test client, repeat the folder-copy step in that client's `Interface/AddOns` folder.
+No Git or build tools are required. If you also use the separate stress-test client, repeat the folder-copy step in that client's `Interface\AddOns` folder.
 
 ![The clock running in WoW, with a white arch, green day diamond, sun, and orbiting light.](docs/images/clock-in-game.png)
 
