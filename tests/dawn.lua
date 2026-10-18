@@ -74,3 +74,33 @@ overlay.scripts.OnUpdate(overlay,0.4)
 dawn.Stop()
 assert(values.Sound_SFXVolume == '0.9')
 print('Dawn timing, audio restoration, cancellation, preview, and recovery tests passed.')
+
+-- Recovery data cannot choose unrelated CVars or supply invalid volumes.
+values.UnrelatedSetting = '0'
+TerminaClockDB.dawnAudioRecovery = {
+    UnrelatedSetting = '1',
+    Sound_SFXVolume = '1.5',
+    Sound_MusicVolume = '-1',
+    Sound_AmbienceVolume = {},
+    Sound_DialogVolume = '0.4',
+}
+values.Sound_SFXVolume, values.Sound_MusicVolume = '0', '0'
+values.Sound_AmbienceVolume, values.Sound_DialogVolume = '0', '0'
+dawn.RecoverAudio()
+assert(values.UnrelatedSetting == '0')
+assert(values.Sound_SFXVolume == '0' and values.Sound_MusicVolume == '0')
+assert(values.Sound_AmbienceVolume == '0' and values.Sound_DialogVolume == '0.4')
+for _, invalid in ipairs({false,'invalid',42}) do
+    TerminaClockDB.dawnAudioRecovery = invalid
+    dawn.RecoverAudio()
+    assert(TerminaClockDB.dawnAudioRecovery == nil)
+end
+-- Animation cleanup still restores audio if WoW rejects viewport restoration.
+values.Sound_SFXVolume = '0.8'
+dawn.Play('second',true,37)
+assert(values.Sound_SFXVolume == '0')
+addon.Viewport.Stop = function() error('Simulated render-frame restriction') end
+dawn.Stop()
+assert(values.Sound_SFXVolume == '0.8')
+assert(not overlay.shown and overlay.scripts.OnUpdate == nil)
+print('Audio recovery allowlist, malformed data, and cleanup-error isolation passed.')

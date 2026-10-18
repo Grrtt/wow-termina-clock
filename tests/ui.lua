@@ -36,7 +36,7 @@ function PlaySoundFile() played = played + 1; return true, played end
 function StopSound() end
 function GetCVar() return "0.5" end
 function SetCVar() end
-for _, file in ipairs({'Clock.lua', 'Viewport.lua', 'Sounds.lua', 'Dawn.lua', 'Preview.lua', 'TerminaClock.lua'}) do
+for _, file in ipairs({'Settings.lua', 'Clock.lua', 'Viewport.lua', 'Sounds.lua', 'Dawn.lua', 'Preview.lua', 'TerminaClock.lua'}) do
     assert(loadfile('TerminaClock/' .. file))('TerminaClock', addon)
 end
 TerminaClockDB = { deadline = addon.Clock.previousDefaultDeadline }

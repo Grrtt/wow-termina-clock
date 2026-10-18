@@ -20,33 +20,50 @@ local channels = { "Sound_SFXVolume", "Sound_MusicVolume", "Sound_AmbienceVolume
 local active
 local days = { first = true, second = true, final = true }
 
+local function ValidVolume(value)
+    if type(value) ~= "string" and type(value) ~= "number" then return false end
+    local volume = tonumber(value)
+    return volume and volume == volume and volume >= 0 and volume <= 1
+end
+
 function Dawn.RecoverAudio()
     local saved = TerminaClockDB.dawnAudioRecovery
-    if not saved then return end
-    for name, value in pairs(saved) do
-        -- Keep volume adjustments made by the player during the transition.
-        if tonumber(GetCVar(name)) == 0 then SetCVar(name, value) end
-    end
     TerminaClockDB.dawnAudioRecovery = nil
+    if type(saved) ~= "table" then return end
+    -- Saved data must never select arbitrary CVars to modify.
+    for _, name in ipairs(channels) do
+        local value = saved[name]
+        if ValidVolume(value) and tonumber(GetCVar(name)) == 0 then
+            SetCVar(name, value)
+        end
+    end
 end
 
 local function QuietAudio()
     local saved = {}
     for _, name in ipairs(channels) do
         local value = GetCVar(name)
-        if value then saved[name] = value end
+        if ValidVolume(value) then saved[name] = value end
     end
     TerminaClockDB.dawnAudioRecovery = saved
-    for name in pairs(saved) do SetCVar(name, 0) end
+    for _, name in ipairs(channels) do
+        if saved[name] ~= nil then SetCVar(name, 0) end
+    end
 end
 
 function Dawn.Stop()
-    if addon.Viewport then addon.Viewport.Stop() end
     active = nil
     overlay:SetScript("OnUpdate", nil)
     overlay:Hide()
     if TerminaClockDB then Dawn.RecoverAudio() end
     if addon.Sounds then addon.Sounds.Stop() end
+    -- A render-frame error must not prevent audio recovery or leave the overlay up.
+    if addon.Viewport then
+        local restored = pcall(addon.Viewport.Stop)
+        if not restored then
+            print("Termina Clock: audio restored, but WoW could not restore the render area. Use /termina test stop to retry.")
+        end
+    end
 end
 
 overlay:SetScript("OnHide", function()

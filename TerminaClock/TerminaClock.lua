@@ -126,14 +126,14 @@ SlashCmdList.TERMINACLOCK = function(input)
         Message(TerminaClockDB.locked and "Position locked." or "Position unlocked.")
     elseif command == "scale" then
         local scale = tonumber(value)
-        if not scale or scale < 0.5 or scale > 3 then
+        if not addon.Settings.ValidNumber(scale, 0.5, 3) then
             Message("Use /termina scale 0.5 through 3.")
             return
         end
         TerminaClockDB.scale = scale
     elseif command == "deadline" then
         local deadline = tonumber(value)
-        if not deadline or deadline ~= deadline or deadline < 1 or deadline > 4102444800 then
+        if not addon.Settings.ValidNumber(deadline, 1, 4102444800) then
             Message("Use /termina deadline <Unix timestamp in seconds>.")
             return
         end
@@ -204,18 +204,7 @@ end
 frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function(self, _, name)
     if name ~= addonName then return end
-    TerminaClockDB = TerminaClockDB or {}
-    if TerminaClockDB.deadline == Clock.previousDefaultDeadline then
-        TerminaClockDB.deadline = Clock.defaultDeadline
-    end
-    local defaults = { x = 0, y = -220, scale = 1, deadline = Clock.defaultDeadline }
-    for key, value in pairs(defaults) do
-        if type(TerminaClockDB[key]) ~= "number" then TerminaClockDB[key] = value end
-    end
-    -- Preserve an explicit opt-out from the old camera effect after upgrading.
-    if TerminaClockDB.screenEffect == nil and TerminaClockDB.camera == false then
-        TerminaClockDB.screenEffect = false
-    end
+    TerminaClockDB = addon.Settings.Normalize(TerminaClockDB, Clock.defaultDeadline, Clock.previousDefaultDeadline)
     addon.Dawn.RecoverAudio()
     ApplySettings()
     Refresh()
