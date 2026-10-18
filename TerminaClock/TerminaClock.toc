@@ -2,7 +2,7 @@
 ## Title: Termina Clock
 ## Notes: A Majora's Mask-inspired countdown to the final day.
 ## Author: grrtt
-## Version: 1.5.4
+## Version: 1.5.5
 ## SavedVariables: TerminaClockDB
 
 Clock.lua

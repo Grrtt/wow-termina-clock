@@ -2,7 +2,7 @@ local addon = {}
 assert(loadfile("TerminaClock/Clock.lua"))("TerminaClock", addon)
 local clock = addon.Clock
 local deadline = clock.defaultDeadline
-assert(os.date("!%Y-%m-%d %H:%M", deadline) == "2026-10-22 07:00")
+assert(os.date("!%Y-%m-%d %H:%M", deadline) == "2026-10-22 00:00")
 for _, case in ipairs({
     { 259201, "The final days" },
     { 259200, "Dawn of the First Day" },

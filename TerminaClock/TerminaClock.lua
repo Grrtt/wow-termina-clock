@@ -102,7 +102,7 @@ frame:SetScript("OnEnter", function(self)
     GameTooltip:AddLine(state.title, 1, 1, 0.8)
     GameTooltip:AddLine(state.text .. " remaining", 1, 1, 1)
     GameTooltip:AddLine("Target: " .. date("%Y-%m-%d %H:%M:%S", TerminaClockDB.deadline) .. " (local time)", 1, 1, 1)
-    GameTooltip:AddLine("Estimated beta end; the exact shutdown time is unannounced.", 1, 0.8, 0.4, true)
+    GameTooltip:AddLine("Estimated wipe: three hours after the stress test starts.", 1, 0.8, 0.4, true)
     GameTooltip:AddLine("Drag to move. /termina for commands.", 1, 1, 1)
     GameTooltip:Show()
 end)
@@ -198,6 +198,9 @@ frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function(self, _, name)
     if name ~= addonName then return end
     TerminaClockDB = TerminaClockDB or {}
+    if TerminaClockDB.deadline == Clock.previousDefaultDeadline then
+        TerminaClockDB.deadline = Clock.defaultDeadline
+    end
     local defaults = { x = 0, y = -220, scale = 1, deadline = Clock.defaultDeadline }
     for key, value in pairs(defaults) do
         if type(TerminaClockDB[key]) ~= "number" then TerminaClockDB[key] = value end

@@ -39,7 +39,9 @@ function SetCVar() end
 for _, file in ipairs({'Clock.lua', 'Viewport.lua', 'Sounds.lua', 'Dawn.lua', 'Preview.lua', 'TerminaClock.lua'}) do
     assert(loadfile('TerminaClock/' .. file))('TerminaClock', addon)
 end
+TerminaClockDB = { deadline = addon.Clock.previousDefaultDeadline }
 TerminaClockFrame.scripts.OnEvent(TerminaClockFrame, 'ADDON_LOADED', 'TerminaClock')
+assert(TerminaClockDB.deadline == addon.Clock.defaultDeadline)
 assert(TerminaClockDB.scale == 1)
 SlashCmdList.TERMINACLOCK('test bell')
 SlashCmdList.TERMINACLOCK('test dawn')
@@ -87,3 +89,8 @@ end
 assert(dayTexture.texturePath == normalTexture)
 assert(TerminaClockDB.deadline == deadline)
 print('Day-label previews, cancellation, expiration, and unchanged deadline tests passed.')
+
+TerminaClockDB.deadline = 1800000000
+TerminaClockFrame.scripts.OnEvent(TerminaClockFrame, 'ADDON_LOADED', 'TerminaClock')
+assert(TerminaClockDB.deadline == 1800000000)
+print('Old default migration and custom deadline preservation tests passed.')
